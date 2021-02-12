@@ -1,11 +1,11 @@
 <?php
+include_once 'template.php';
 class DB {
     protected $conn;
     protected $table;
     public $last_message = '';
 
     public function __construct($table_name) {
-
         $this->table = $table_name;
         $servername = "localhost";
         $username = "root";
@@ -24,6 +24,23 @@ class DB {
         $this->conn->close();
     }
 
+    public function setData($text, $status) {
+      if ($status === '') {
+        $status = 0;
+      }
+      $d = new DateTime();
+      $d->setTimezone(new DateTimeZone('Europe/Riga'));
+      $createdAt =  $d->format("Y-m-d H:m:s");
+      $modifiedAt = $d->format("Y-m-d H:m:s");
+
+      $this->set([
+        'text' => $text,
+        'status' => $status,
+        'createdAt' => $createdAt,
+        'modifiedAt' => $modifiedAt
+      ]);
+    }
+
     public function get() {
         $sql = "SELECT * FROM `$this->table`";
         $result = $this->conn->query($sql);
@@ -31,7 +48,7 @@ class DB {
         if ($result) {
           if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-              $this->last_message = json_encode($row) . "<br>";
+              template($row['id'], $row['text'], $row['status']);
             }
           } else {
             $this->last_message = "0 results";
@@ -56,12 +73,12 @@ class DB {
         }
       }
 
-
-      $sql = "INSERT INTO `$this->table` ($columns) VALUES ($values)";
+      $sql = "INSERT INTO `$this->table` ($columns) VALUES ($values);";
       $result = $this->conn->query($sql);
-    
       if ($result === true) {
         $this->last_message = "ieraksts pievienots";
+        echo "id: " . $this->conn->insert_id;
+        return $this->conn->insert_id;
       }
       else {
         $this->last_message = $sql. "neizdevās inserts";

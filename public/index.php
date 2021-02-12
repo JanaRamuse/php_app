@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 const BASE_URL = "http://localhost/";
 
-function get_url($path="") {
+function get_url($path = "") {
     echo BASE_URL . $path;
 }
 
@@ -30,10 +30,7 @@ if (isset($_SESSION['username'], $_SESSION['password']) &&
         }
         elseif ($_GET['page'] === "test_request") {
             $page_name = "test_request";
-        }
-        elseif ($_GET['page'] === "tic-tac-toe") {
-            $page_name = "tic-tac-toe";
-        } 
+        }  
         elseif ($_GET['page'] === "db_test") {
             $page_name = "db_test";
         }     
